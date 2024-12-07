@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "310249023272",
+    "project_id": "cn-proj-webrtc",
+    "storage_bucket": "cn-proj-webrtc.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:310249023272:android:e31bb16ac62f5531f1521d",
+        "android_client_info": {
+          "package_name": "com.example.p2p"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDMiRUGyzsdn1p_SZMS28KlsD6uNtrQOU4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,57 @@
+plugins {
+    id "com.android.application"
+    id "kotlin-android"
+    // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
+    id "dev.flutter.flutter-gradle-plugin"
+    id 'com.google.gms.google-services'  // Ensure you apply the Google services plugin for Firebase
+}
+
+dependencies {
+    // Import the Firebase BoM (Bill of Materials) to manage Firebase dependencies
+    implementation platform('com.google.firebase:firebase-bom:33.5.1')
+
+    // Add Firebase Analytics (this will automatically use the correct version as specified in the BoM)
+    implementation 'com.google.firebase:firebase-analytics'
+
+    // Add any other Firebase products here
+    // Example: Firebase Firestore
+    // implementation 'com.google.firebase:firebase-firestore'
+}
+
+android {
+    namespace = "com.example.p2p"
+    compileSdkVersion flutter.compileSdkVersion  // Ensure you're using the Flutter compile SDK version
+    ndkVersion flutter.ndkVersion  // Ensure you're using the correct NDK version for your project
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+        
+    }
+
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8  // Ensure Kotlin targets the correct JVM version
+    }
+
+    defaultConfig {
+        // Specify your unique Application ID (ensure it matches with your app's package name)
+        applicationId = "com.example.p2p"
+        // Update the following values as necessary based on your Flutter project configuration
+        minSdkVersion 23
+        targetSdkVersion flutter.targetSdkVersion
+        versionCode flutter.versionCode
+        versionName flutter.versionName
+    }
+
+    buildTypes {
+        release {
+            // Ensure you're using the correct signing configuration for the release build
+            // For now, signing with the debug keys to test the release build
+            signingConfig signingConfigs.debug
+        }
+    }
+}
+
+flutter {
+    source = "../.."  // Make sure the Flutter SDK path is correct relative to your project
+}
