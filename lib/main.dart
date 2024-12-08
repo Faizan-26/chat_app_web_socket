@@ -19,7 +19,7 @@ void main() async {
       otpLength: 6,
       otpType: OTPType.numeric,
       appName: "Secure Chat",
-      expiry: 30000, // equivalent to 5 minutes
+      expiry: 300000, // equivalent to 5 minutes
       // emailTheme: EmailTheme.v5,
     );
     EmailOTP.setTemplate(template: '''

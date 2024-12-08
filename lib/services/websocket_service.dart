@@ -3,7 +3,9 @@ import 'dart:typed_data';
 import 'dart:isolate';
 
 import 'package:p2p/controller/auth_controller.dart';
+import 'package:p2p/models/typing_user.dart';
 import 'package:p2p/widgets/room_message.dart';
+import 'package:p2p/widgets/typing_indicator.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:get/get.dart';
@@ -19,6 +21,7 @@ class WebSocketService extends GetxService {
   late final encrypt.Encrypter encrypter;
   Rx<bool> isConnected = false.obs;
 
+  final RxList<TypingIndicator> typingUsers = <TypingIndicator>[].obs;
   // Change messages to an RxList of Widgets
   final RxList<Widget> messages = <Widget>[].obs;
 
@@ -112,6 +115,39 @@ class WebSocketService extends GetxService {
         roomId: room,
       ));
       print(messages.length);
+    });
+  }
+
+  void emitUserTyping(String room) {
+    socket?.emit('typing', {
+      'username': getUsername(),
+      'room': room,
+    });
+  }
+
+  void handleUserTyping() {
+    socket?.on('typing', (data) {
+      final username = data['username'];
+      final room = data['room'];
+      print("$username is typing in $room");
+      if (username == getUsername()) return;
+      typingUsers.add(TypingIndicator(username: username, roomId: room));
+    });
+  }
+
+  void emitUserStoppedTyping(String room) {
+    socket?.emit('stop_typing', {
+      'username': getUsername(),
+      'room': room,
+    });
+  }
+
+  void handleUserStoppedTyping() {
+    socket?.on('stop_typing', (data) {
+      final username = data['username'];
+      final room = data['room'];
+      print("$username stopped typing in $room");
+      typingUsers.removeWhere((user) => user.username == username);
     });
   }
 

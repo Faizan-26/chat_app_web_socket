@@ -1,13 +1,16 @@
 import 'dart:math';
 
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:p2p/global/gloval_service.dart';
 import 'package:p2p/widgets/file_message.dart';
 import 'package:p2p/widgets/room_message.dart';
 import 'package:p2p/widgets/text_message.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:get/get.dart';
+import 'package:flutter/foundation.dart' as foundation;
 
 class GroupChatPage extends StatefulWidget {
   final String groupName;
@@ -27,6 +30,7 @@ class GroupChatPageState extends State<GroupChatPage> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   late IO.Socket socket;
+  bool _isEmojiPickerVisible = false;
 
   @override
   void initState() {
@@ -67,6 +71,12 @@ class GroupChatPageState extends State<GroupChatPage> {
       );
       _messageController.clear();
     }
+  }
+
+  void _toggleEmojiPicker() {
+    setState(() {
+      _isEmojiPickerVisible = !_isEmojiPickerVisible;
+    });
   }
 
   @override
@@ -124,41 +134,140 @@ class GroupChatPageState extends State<GroupChatPage> {
               );
             }),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              children: [
-                IconButton(
-                    onPressed: () {
-                      // Implement file upload functionality here using file picker
-                      FilePicker.platform.pickFiles().then((result) {
-                        if (result != null) {
-                          final path = result.files.single.path;
-                          if (path == null) {
-                            Get.snackbar(
-                                "Path Error", "Cannot find specified file");
-                            return;
-                          }
-                          webSocketService.sendFile(path, widget.groupId);
+          if (!_isEmojiPickerVisible)
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  if (!_isEmojiPickerVisible)
+                    IconButton(
+                        onPressed: () {
+                          // Implement file upload functionality here using file picker
+                          FilePicker.platform.pickFiles().then((result) {
+                            if (result != null) {
+                              final path = result.files.single.path;
+                              if (path == null) {
+                                Get.snackbar(
+                                    "Path Error", "Cannot find specified file");
+                                return;
+                              }
+                              webSocketService.sendFile(path, widget.groupId);
+                            }
+                          });
+                        },
+                        icon: const Icon(Icons.attach_file)),
+                  IconButton(
+                    onPressed: _toggleEmojiPicker,
+                    icon: const Icon(Icons.emoji_emotions),
+                  ),
+                  Expanded(
+                    child: TextField(
+                      controller: _messageController,
+                      decoration: const InputDecoration(
+                        hintText: 'Type your message...',
+                      ),
+                      onTap: () {
+                        if (_isEmojiPickerVisible) {
+                          setState(() {
+                            _isEmojiPickerVisible = false;
+                          });
                         }
-                      });
-                    },
-                    icon: const Icon(Icons.attach_file)),
-                Expanded(
-                  child: TextField(
-                    controller: _messageController,
-                    decoration: const InputDecoration(
-                      hintText: 'Type your message...',
+                      },
                     ),
                   ),
-                ),
-                IconButton(
-                  icon: const Icon(Icons.send),
-                  onPressed: _sendMessage,
+                  IconButton(
+                    icon: const Icon(Icons.send),
+                    onPressed: _sendMessage,
+                  ),
+                ],
+              ),
+            ),
+          if (_isEmojiPickerVisible)
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      if (!_isEmojiPickerVisible)
+                        IconButton(
+                            onPressed: () {
+                              // Implement file upload functionality here using file picker
+                              FilePicker.platform.pickFiles().then((result) {
+                                if (result != null) {
+                                  final path = result.files.single.path;
+                                  if (path == null) {
+                                    Get.snackbar("Path Error",
+                                        "Cannot find specified file");
+                                    return;
+                                  }
+                                  webSocketService.sendFile(
+                                      path, widget.groupId);
+                                }
+                              });
+                            },
+                            icon: const Icon(Icons.attach_file)),
+                      IconButton(
+                        onPressed: _toggleEmojiPicker,
+                        icon: const Icon(Icons.emoji_emotions),
+                      ),
+                      Expanded(
+                        child: TextField(
+                          controller: _messageController,
+                          decoration: const InputDecoration(
+                            hintText: 'Type your message...',
+                          ),
+                          onTap: () {
+                            if (_isEmojiPickerVisible) {
+                              setState(() {
+                                _isEmojiPickerVisible = false;
+                              });
+                            }
+                          },
+                        ),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.send),
+                        onPressed: _sendMessage,
+                      ),
+                    ],
+                  ),
+                ).animate().slide(begin: const Offset(0, 4)),
+                SizedBox(
+                  height: 250, // Adjusted height for better display
+                  child: EmojiPicker(
+                    textEditingController: _messageController,
+                    config: Config(
+                      height: 250, // Adjusted height for better display
+                      checkPlatformCompatibility: true,
+
+                      emojiViewConfig: EmojiViewConfig(
+                        emojiSizeMax: 28 *
+                            (foundation.defaultTargetPlatform ==
+                                    TargetPlatform.iOS
+                                ? 1.20
+                                : 1.0),
+                      ),
+                      viewOrderConfig: const ViewOrderConfig(
+                        top: EmojiPickerItem.searchBar,
+                        middle: EmojiPickerItem.emojiView,
+                        bottom: EmojiPickerItem.categoryBar,
+                      ),
+                      skinToneConfig: const SkinToneConfig(),
+                      categoryViewConfig: const CategoryViewConfig(),
+                      bottomActionBarConfig: const BottomActionBarConfig(),
+                      searchViewConfig: const SearchViewConfig(
+                          backgroundColor: Color(0xFFEBEFF2)),
+                    ),
+                  )
+                      .animate()
+                      .fadeIn(duration: 300.ms)
+                      .slide(begin: const Offset(0, 1)),
                 ),
               ],
             ),
-          ),
         ],
       ),
     );
