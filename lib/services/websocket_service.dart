@@ -42,7 +42,7 @@ class WebSocketService extends GetxService {
 
   final RxSet<TypingUser> typingUsers = <TypingUser>{}.obs;
   final RxList<Widget> messages = <Widget>[].obs;
-
+  
   // incomingFiles["$room-$filename"] = {
   //   'chunks': List<Uint8List>,
   //   'total': int,
@@ -143,10 +143,10 @@ class WebSocketService extends GetxService {
       try {
         final decryptedMessage = decrypt(data['message']);
         messages.add(TextMessage(
-          sender: data['username'],
-          message: decryptedMessage,
-          roomId: data['room'],
-        ));
+            sender: data['username'],
+            message: decryptedMessage,
+            roomId: data['room'],
+            timestamp: DateTime.now()));
       } catch (e) {
         print('Decryption error: $e');
       }
@@ -307,6 +307,7 @@ class WebSocketService extends GetxService {
       sender: getUsername(),
       filePath: receivedFilePath,
       roomId: room,
+      timestamp: DateTime.now(),
     ));
   }
 
@@ -369,11 +370,11 @@ class WebSocketService extends GetxService {
 
         // Show file message to user
         messages.add(FileMessage(
-          filename: filename,
-          sender: sender,
-          filePath: receivedFilePath,
-          roomId: room,
-        ));
+            filename: filename,
+            sender: sender,
+            filePath: receivedFilePath,
+            roomId: room,
+            timestamp: DateTime.now()));
       }
     });
 

@@ -78,6 +78,8 @@ class FirebaseService {
     });
   }
 
+  
+
   // change description of groups
   Future<void> updateGroupDescription(
       String groupId, String description) async {

@@ -3,7 +3,6 @@ import 'package:get/get.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../pages/Home/page.dart';
 import '../pages/login/page.dart';
-import '../pages/sign_up/otp_verification_page.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthController extends GetxController {
@@ -23,11 +22,12 @@ class AuthController extends GetxController {
 
   void _initialScreen(User? user) {
     if (user == null) {
-      Get.offAll(() => LoginPage());
+      Get.offAll(() => const AuthPage());
     } else {
       Get.offAll(() => const HomePage());
     }
   }
+
   get userId => _user.value!.uid;
 
   Future<void> register(String email, String password) async {
@@ -86,7 +86,8 @@ class AuthController extends GetxController {
         return;
       }
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
       final AuthCredential credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
@@ -99,18 +100,18 @@ class AuthController extends GetxController {
     }
   }
 
-  // OTP Verification
-  // Function to send OTP to the user's email
-  Future<void> sendOTP(String email, String passwordController) async {
-    try {
-      await EmailOTP.sendOTP(email: email); // Send OTP to the user's email
-      Get.to(() => OTPVerificationPage(
-          passwordController: passwordController,
-          email: email)); // Navigate to OTP screen
-    } catch (e) {
-      Get.snackbar("Error", "Failed to send OTP. Please try again.");
-    }
-  }
+  // // OTP Verification
+  // // Function to send OTP to the user's email
+  // Future<void> sendOTP(String email, String passwordController) async {
+  //   try {
+  //      // Send OTP to the user's email
+  //     Get.to(() => OTPVerificationPage(
+  //         passwordController: passwordController,
+  //         email: email)); // Navigate to OTP screen
+  //   } catch (e) {
+  //     Get.snackbar("Error", "Failed to send OTP. Please try again.");
+  //   }
+  // }
 
   Future<void> verifyOTPAndCreateAccount(
       String email, String enteredOtp, String password) async {
@@ -124,6 +125,19 @@ class AuthController extends GetxController {
       await register(email, password); // Create the account
     } catch (e) {
       Get.snackbar("Error", "Failed to verify OTP. Please try again.");
+    }
+  }
+
+  Future<void> resetPassword(String email) async {
+    try {
+      await auth.sendPasswordResetEmail(email: email);
+      Get.snackbar("Success",
+          "A password reset link has been sent to your email. Please check your inbox.");
+      // return true;
+    } catch (e) {
+      Get.snackbar(
+          "Error", "Failed to send password reset email. Please try again.");
+      // return false;
     }
   }
 }

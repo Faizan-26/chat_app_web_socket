@@ -7,26 +7,29 @@ class GoogleSignInButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton.icon(
-        icon: SizedBox(
-          width: 24,
-          height: 24,
-          child: SvgPicture.string(
-            googleSvg,
+    return Hero(
+      tag: 'google',
+      child: SizedBox(
+        width: double.infinity,
+        child: ElevatedButton.icon(
+          icon: SizedBox(
+            width: 24,
+            height: 24,
+            child: SvgPicture.string(
+              googleSvg,
+            ),
           ),
-        ),
-        label: const Text('Continue with Google'),
-        onPressed: () {
-          AuthController.instance.signInWithGoogle();
-        },
-        style: ElevatedButton.styleFrom(
-          enableFeedback: true,
-          textStyle: const TextStyle(fontSize: 16),
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8),
+          label: const Text('Continue with Google'),
+          onPressed: () {
+            AuthController.instance.signInWithGoogle();
+          },
+          style: ElevatedButton.styleFrom(
+            enableFeedback: true,
+            textStyle: const TextStyle(fontSize: 16),
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
           ),
         ),
       ),

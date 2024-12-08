@@ -155,8 +155,9 @@ class GroupChatPageState extends State<GroupChatPage> {
               }
 
               return ListView.builder(
+                
                 controller: _scrollController,
-                physics: const ClampingScrollPhysics(),
+                physics: const ScrollPhysics(),
                 itemCount: messagesList.length,
                 itemBuilder: (context, index) {
                   return messagesList[index];

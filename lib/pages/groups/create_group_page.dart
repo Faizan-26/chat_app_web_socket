@@ -92,10 +92,10 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
                       onTap: _pickImage,
                       child: const CircleAvatar(
                         radius: 20,
-                        backgroundColor: Colors.blue,
+                        // backgroundColor: Colors.blue,
                         child: Icon(
                           Icons.edit,
-                          color: Colors.white,
+                          // color: Colors.white,
                         ),
                       ),
                     ),
@@ -114,7 +114,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
               decoration: InputDecoration(
                 hintText: 'Enter Room Name',
                 filled: true,
-                fillColor: Colors.white,
+                // fillColor: Colors.white,
                 contentPadding: const EdgeInsets.symmetric(
                   vertical: 20,
                   horizontal: 16,
@@ -126,7 +126,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.0),
                   borderSide: const BorderSide(
-                    color: Colors.blueAccent,
+                    // ,
                     width: 2.0,
                   ),
                 ),
@@ -145,7 +145,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
               decoration: InputDecoration(
                 hintText: 'Enter Room Description',
                 filled: true,
-                fillColor: Colors.white,
+                // fillColor: Colors.white,
                 contentPadding: const EdgeInsets.symmetric(
                   vertical: 20,
                   horizontal: 16,
@@ -157,7 +157,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.0),
                   borderSide: const BorderSide(
-                    color: Colors.blueAccent,
+                    // ,
                     width: 2.0,
                   ),
                 ),
@@ -172,14 +172,14 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
             const SizedBox(height: 8),
             Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                // color: Colors.white,
                 borderRadius: BorderRadius.circular(12.0),
-                boxShadow: [
+                boxShadow: const [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.3),
+                    // color: Colors.grey.withOpacity(0.3),
                     blurRadius: 8,
                     spreadRadius: 2,
-                    offset: const Offset(0, 3),
+                    offset: Offset(0, 3),
                   ),
                 ],
               ),
@@ -201,7 +201,7 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+                        // color: Colors.black87,
                       ),
                     ),
                   ),
@@ -209,9 +209,9 @@ class _CreateGroupPageState extends State<CreateGroupPage> {
                       onPressed: () {
                         groupInvitationCodeController.text = getRandomText(6);
                       },
-                      icon: const Icon(Icons.loop, color: Colors.blueAccent)),
+                      icon: const Icon(Icons.loop, )),
                   IconButton(
-                    icon: const Icon(Icons.copy, color: Colors.blueAccent),
+                    icon: const Icon(Icons.copy, ),
                     onPressed: () {
                       // Logic to copy the code
                       ScaffoldMessenger.of(context).showSnackBar(

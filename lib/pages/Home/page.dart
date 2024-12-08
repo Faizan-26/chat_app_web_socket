@@ -32,7 +32,7 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: const GroupListPage(),
-      floatingActionButton: FloatingActionButton(
+      floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute(
@@ -40,7 +40,8 @@ class _HomePageState extends State<HomePage> {
             ),
           );
         },
-        child: const Icon(Icons.add),
+        icon: const Icon(Icons.add),
+        label: const Text('Create Group'),
       ),
     );
   }
