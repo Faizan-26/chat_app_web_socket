@@ -12,6 +12,7 @@ class CloudinaryService {
         CloudinaryFile.fromFile(imagePath,
             publicId: groupId, resourceType: CloudinaryResourceType.Image),
       );
+      print("MY RES SECURE URL : ${response.secureUrl}");
       return response.secureUrl;
     } catch (e) {
       print('Error uploading image: $e');

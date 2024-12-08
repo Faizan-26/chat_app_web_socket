@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:async'; // Add this import for Timer
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:file_picker/file_picker.dart';
@@ -8,6 +9,7 @@ import 'package:p2p/global/gloval_service.dart';
 import 'package:p2p/widgets/file_message.dart';
 import 'package:p2p/widgets/room_message.dart';
 import 'package:p2p/widgets/text_message.dart';
+import 'package:p2p/widgets/typing_indicator.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:get/get.dart';
 import 'package:flutter/foundation.dart' as foundation;
@@ -31,6 +33,7 @@ class GroupChatPageState extends State<GroupChatPage> {
   final ScrollController _scrollController = ScrollController();
   late IO.Socket socket;
   bool _isEmojiPickerVisible = false;
+  Timer? _typingTimer;
 
   @override
   void initState() {
@@ -38,6 +41,17 @@ class GroupChatPageState extends State<GroupChatPage> {
     _initializeWebSocket();
     webSocketService.messages.listen((_) {
       _scrollToBottom();
+    });
+
+    // Listen for typing events from the server
+    webSocketService.socket?.on('typing', (data) {
+      // Update typingUsers list when a user is typing
+      webSocketService.typingUsers.add(data['username']);
+    });
+
+    webSocketService.socket?.on('stop_typing', (data) {
+      // Remove user from typingUsers list when they stop typing
+      webSocketService.typingUsers.remove(data['username']);
     });
   }
 
@@ -51,17 +65,20 @@ class GroupChatPageState extends State<GroupChatPage> {
     });
   }
 
+  void triggerTyping() {}
   void _scrollToBottom() {
     if (_scrollController.hasClients) {
       _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
+        _scrollController.position.maxScrollExtent + 100,
         duration: const Duration(milliseconds: 300),
-        curve: Curves.easeOut,
+        curve: Curves.ease,
       );
     }
   }
 
   void _sendMessage() {
+    // trigger stop typing event
+    _onUserStopTyping();
     final messageText = _messageController.text.trim();
 
     if (messageText.isNotEmpty) {
@@ -77,6 +94,21 @@ class GroupChatPageState extends State<GroupChatPage> {
     setState(() {
       _isEmojiPickerVisible = !_isEmojiPickerVisible;
     });
+  }
+
+  void _onUserTyping() {
+    if (_typingTimer?.isActive ?? false) _typingTimer?.cancel();
+
+    // Send typing event to the server
+    webSocketService.emitUserTyping(widget.groupId);
+
+    _typingTimer = Timer(const Duration(seconds: 1), _onUserStopTyping);
+  }
+
+  void _onUserStopTyping() {
+    // Send stop typing event to the server
+    webSocketService.emitUserStoppedTyping(widget.groupId);
+    _typingTimer = null;
   }
 
   @override
@@ -95,25 +127,22 @@ class GroupChatPageState extends State<GroupChatPage> {
       ),
       body: Column(
         children: [
-          Obx(() {
-            if (webSocketService.fileNotifications
-                .map((e) => e['room'])
-                .contains(widget.groupId)) {
-              return const LinearProgressIndicator();
-            }
-            return const SizedBox();
-          }),
+          // Obx(() {
+          //   if (webSocketService.fileNotifications
+          //       .map((e) => e['room'])
+          //       .contains(widget.groupId)) {
+          //     return const LinearProgressIndicator();
+          //   }
+          //   return const SizedBox();
+          // }),
           Expanded(
             child: Obx(() {
               final messagesList = webSocketService.messages.where((wid) {
                 if (wid is TextMessage) {
-                  print(wid.roomId);
-                  print(widget.groupId);
                   return wid.roomId == widget.groupId;
                 } else if (wid is FileMessage) {
                   return wid.roomId == widget.groupId;
-                }
-                if (wid is RoomMessage) {
+                } else if (wid is RoomMessage) {
                   return wid.roomId == widget.groupId;
                 }
                 return false;
@@ -127,6 +156,7 @@ class GroupChatPageState extends State<GroupChatPage> {
 
               return ListView.builder(
                 controller: _scrollController,
+                physics: const ClampingScrollPhysics(),
                 itemCount: messagesList.length,
                 itemBuilder: (context, index) {
                   return messagesList[index];
@@ -134,6 +164,31 @@ class GroupChatPageState extends State<GroupChatPage> {
               );
             }),
           ),
+          // show typing indicator
+          Obx(() {
+            final typingUsersInRoom =
+                webSocketService.typingUsers.where((user) {
+              return user.roomId == widget.groupId;
+            }).toList();
+            if (typingUsersInRoom.isEmpty) {
+              return const SizedBox();
+            }
+
+            return SizedBox(
+              width: double.infinity,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: typingUsersInRoom.map((user) {
+                  return TypingIndicator(
+                    username: user.username,
+                    roomId: widget.groupId,
+                  );
+                }).toList(),
+              ),
+            );
+          }),
           if (!_isEmojiPickerVisible)
             Padding(
               padding: const EdgeInsets.all(8.0),
@@ -172,6 +227,9 @@ class GroupChatPageState extends State<GroupChatPage> {
                             _isEmojiPickerVisible = false;
                           });
                         }
+                      },
+                      onChanged: (text) {
+                        _onUserTyping();
                       },
                     ),
                   ),

@@ -52,23 +52,39 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'Secure Chat',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-        scaffoldBackgroundColor: Colors.white,
+        primaryColor: const Color(0xFFF5F5DC), // Beige
+        scaffoldBackgroundColor: const Color(0xFFFFF9F6), // Off-White
         appBarTheme: const AppBarTheme(
-          color: Colors.blue,
+          backgroundColor: Color(0xFFF5F5DC), // Beige
           elevation: 0,
+          titleTextStyle: TextStyle(
+            color: Color(0xFF333333), // Dark Gray
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+          iconTheme: IconThemeData(color: Color(0xFF87CEEB)), // Soft Blue
         ),
         inputDecorationTheme: const InputDecorationTheme(
-          labelStyle: TextStyle(color: Colors.blue),
-          focusedBorder: UnderlineInputBorder(
-            borderSide: BorderSide(color: Colors.blue),
+          filled: true,
+          fillColor: Color(0xFFFFF9F6), // Off-White
+          labelStyle: TextStyle(color: Color(0xFF333333)), // Dark Gray
+          hintStyle: TextStyle(color: Color(0xFF666666)), // Medium Gray
+          focusedBorder: OutlineInputBorder(
+            borderSide:
+                BorderSide(color: Color(0xFFFFDAB9), width: 2.0), // Peach
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+          ),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(color: Color(0xFFD3D3D3)), // Light Gray
+            borderRadius: BorderRadius.all(Radius.circular(10.0)),
           ),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blue, // Background color
+            backgroundColor: const Color(0xFF87CEEB), // Soft Blue
+            foregroundColor: Colors.white, // White text
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(12),
             ),
             padding:
                 const EdgeInsets.symmetric(vertical: 16.0, horizontal: 30.0),
@@ -76,9 +92,15 @@ class MyApp extends StatelessWidget {
         ),
         textButtonTheme: TextButtonThemeData(
           style: TextButton.styleFrom(
-            foregroundColor: Colors.blue, // Text color
+            foregroundColor: const Color(0xFFFFDAB9), // Peach
+            textStyle: const TextStyle(fontWeight: FontWeight.bold),
           ),
         ),
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(color: Color(0xFF333333)), // Dark Gray
+          bodySmall: TextStyle(color: Color(0xFF666666)), // Medium Gray
+        ),
+        iconTheme: const IconThemeData(color: Color(0xFF87CEEB)), // Soft Blue
       ),
       home: LoginPage(),
     );

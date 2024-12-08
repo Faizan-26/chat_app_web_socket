@@ -17,8 +17,16 @@ class LoginPage extends StatelessWidget {
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            Hero(
+              tag: 'loginimg',
+              child: Image.asset(
+                'assets/loginimg.png',
+                width: MediaQuery.of(context).size.width * 0.6,
+                height: MediaQuery.of(context).size.height * 0.4,
+              ),
+            ),
             TextField(
               controller: emailController,
               decoration: const InputDecoration(labelText: 'Email'),
@@ -42,7 +50,7 @@ class LoginPage extends StatelessWidget {
               onPressed: () => Get.to(() => SignUpPage()),
               child: const Text('Create an Account'),
             ),
-            const SizedBox(height: 20),
+            // const SizedBox(height: 20),
             const GoogleSignInButton(),
           ],
         ),
